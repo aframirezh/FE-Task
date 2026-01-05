@@ -5,8 +5,7 @@
  */
 
 import { http, HttpResponse } from "msw";
-
-const API_URL = import.meta.env.API_URL;
+import { API_URL } from "../../data/api/users";
 
 export const handlers = [
   http.get(API_URL, () => {

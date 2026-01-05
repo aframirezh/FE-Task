@@ -1,7 +1,7 @@
 import { http } from "./client";
 import type { UsersResponse, UserListItem } from "../types";
 
-const API_URL = import.meta.env.API_URL;
+export const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Formats a user's full name.
