@@ -4,6 +4,7 @@ import { getUsers } from "../../data/api/users";
 import { Pagination } from "./Pagination";
 import { UserCard } from "./UserCard";
 import { PAGINATION } from "../../../app.constants";
+import { getPageSlice, getTotalPages } from "../../utils/pagination";
 
 const PAGE_SIZE = PAGINATION.PAGE_SIZE;
 
@@ -21,20 +22,15 @@ export function DataList() {
 
   // Memoize users to avoid unnecessary recalculations
   const users = useMemo(() => data ?? [], [data]);
-  const totalPages = Math.ceil(users.length / PAGE_SIZE);
-  
-  /**
-   * Ensure pagination values stay within valid bounds
-   * - safeTotalPages: At least 1 page, 0 is not allowed and pagination always shows at least one page
-   * - safePage: Current page cannot exceed total pages
-   */
-  const safeTotalPages = Math.max(1, totalPages);
-  const safePage = Math.min(page, safeTotalPages);
 
-  const pageItems = useMemo(() => {
-    const start = (safePage - 1) * PAGE_SIZE;
-    return users.slice(start, start + PAGE_SIZE);
-  }, [safePage, users]);
+  // The pagination helper guarantees safe data slicing, 
+  // while the component keeps UI state within valid bounds.
+  const totalPages = getTotalPages(users.length, PAGE_SIZE);
+  const pageItems = useMemo(
+    () => getPageSlice(users, page, PAGE_SIZE),
+    [users, page]
+);
+
 
   // Safe messages for loading, error and empty states
   if (isLoading) {
@@ -58,10 +54,10 @@ export function DataList() {
       </div>
 
       <Pagination
-        page={safePage}
-        totalPages={safeTotalPages}
+        page={page}
+        totalPages={totalPages}
         onPrev={() => setPage((p) => Math.max(1, p - 1))}
-        onNext={() => setPage((p) => Math.min(safeTotalPages, p + 1))}
+        onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
       />
     </section>
   );
