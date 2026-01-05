@@ -67,7 +67,7 @@ e2e/
 
 The application relies on a single environment variable:
 
-VITE_API_URL=https://dummyjson.com/...
+- VITE_API_URL=[https://dummyjson.com/c/cc23-d11e-4301-88b8]()
 
 ### Usage
 
