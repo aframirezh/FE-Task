@@ -1,73 +1,176 @@
-# React + TypeScript + Vite
+# FE Task — Paginated Data List
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend technical challenge implemented with a **production-ready architecture**, focusing on **clean code**, **performance**, **testing at all levels**, and **developer experience**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+- **React + TypeScript**
+- **Vite** (build tool)
+- **Tailwind CSS** (UI styling)
+- **TanStack Query (React Query)** (data fetching & caching)
+- **Vitest + Testing Library** (unit & integration tests)
+- **MSW** (API mocking for integration tests)
+- **Playwright** (end-to-end tests)
+- **Docker & Docker Compose**
+- **GitHub Actions** (CI)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Paginated user list (20 items per page)
+- Clean card-based UI
+- Deterministic data handling
+- Fully tested at:
+  - Unit level
+  - Integration level
+  - End-to-End level
+- Dockerized for production and testing
+- CI pipeline ready for real-world workflows
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project Structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```txt
+src/
+├── components/
+│   └── DataList/
+│       ├── DataList.tsx
+│       ├── UserCard.tsx
+│       ├── Pagination.tsx
+│       ├── DataList.test.tsx        # integration tests
+│       ├── UserCard.test.tsx        # unit tests
+│       └── pagination.test.tsx      # unit tests
+├── data/
+│   └── api/
+│       ├── users.ts                 # API access + mapping
+│       └── client.ts
+├── tests/
+│   ├── msw/
+│   │   ├── handlers.ts
+│   │   └── server.ts
+│   ├── render.tsx                   # test utilities
+│   └── setup.ts
+├── utils/
+│   └── pagination.ts
+├── constants/
+│   └── app.constants.ts
+└── env.d.ts
+e2e/
+└── datalist.spec.ts                 # Playwright E2E test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The application relies on a single environment variable:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+VITE_API_URL=https://dummyjson.com/...
+
+### Usage
+
+- Used by the application via import.meta.env
+- Used by integration and E2E tests via process.env
+- Injected at build time for Docker images
+
+### Environment files
+
+- .env → local development
+- .env.test → integration tests
+- .env.docker → Docker & Docker Compose workflows
+
+## Testing
+
+### Unit Tests
+
+- Test isolated logic and presentational components
+- Fast and deterministic
+- No network or browser dependencies
+
 ```
+npm run test
+```
+
+### Integration Tests
+
+- React components combined with TanStack Query
+- API mocked using MSW
+- Validates real component behavior and data flow
+
+```
+npm run test
+```
+
+### End-to-End Tests (Playwright)
+
+- Runs in a real Chromium browser
+- Validates the full user flow:
+
+  - initial page load
+  - rendering of 20 items per page
+  - pagination to the next page
+
+- Network requests are intercepted to ensure deterministic results
+
+```
+npm run e2e
+```
+
+## Docker
+
+Production build (served with Nginx)
+
+```
+npm run docker:up
+```
+
+The application will be available at:
+
+```
+http://localhost:8080
+```
+
+### Run unit and integration tests in Docker
+
+```
+npm run docker:test
+```
+
+### Stop containers
+
+```
+npm run docker:down
+```
+
+### Docker Compose Services
+
+#### web
+
+- Builds the application and serves it using Nginx
+
+#### test
+
+- Runs unit and integration tests inside a container and exits
+
+## CI — GitHub Actions
+
+A CI pipeline is configured using GitHub Actions and runs automatically on:
+
+- Pushes to develop and main
+- Pull requests targeting develop or main
+
+### CI Pipeline Steps
+
+- Install dependencies
+- Run unit and integration tests (Vitest)
+- Build the application
+- Run end-to-end tests (Playwright)
+- Upload Playwright report as an artifact
+
+## Notes
+
+- End-to-end tests intentionally mock network responses to avoid flaky builds
+- Docker images are optimized for CI and production usage
+- Playwright tests are executed separately from Vitest for performance and clarity
