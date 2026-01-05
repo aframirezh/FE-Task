@@ -21,7 +21,6 @@ export function UserCard({ fullName, job, address }: UserCardProps) {
       <h3 data-testid="user-name" className="text-sm font-semibold text-gray-900">
         {fullName}
       </h3>
-
       <p className="mt-1 text-sm text-gray-600">{job}</p>
       <p className="mt-2 text-xs text-gray-500">{address}</p>
     </div>
