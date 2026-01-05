@@ -12,7 +12,12 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
-    "e2e:ui": "playwright test --ui"
+    "e2e:ui": "playwright test --ui",
+    "docker:up": "docker compose --env-file .env.docker up -d --build web",
+    "docker:down": "docker compose down",
+    "docker:test": "docker compose --env-file .env.docker up --build --abort-on-container-exit --exit-code-from test test",
+    "docker:rebuild": "docker compose --env-file .env.docker build --no-cache",
+    "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.16",
