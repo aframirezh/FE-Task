@@ -25,6 +25,9 @@ function formatAddress(location: UsersResponse["result"][number]["location"]) {
  * Maps API response to UI models so the UI remains backend-agnostic
  */
 export async function getUsers(): Promise<UserListItem[]> {
+  if (!API_URL) {
+    throw new Error("Missing env var: VITE_API_URL");
+  }
   const data = await http<UsersResponse>(API_URL);
 
   const items = data.result ?? [];
